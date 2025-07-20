@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBAN Copy Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .iban-container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            text-align: center;
+        }
+        .iban-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            word-break: break-all; /* Ensures long IBANs wrap */
+        }
+        .copy-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 10px;
+            color: green;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your IBAN Addresses</h1>
+
+    <div class="iban-container">
+        <p>IBAN 1:</p>
+        <div id="iban1" class="iban-display">YOUR_FIRST_IBAN_HERE</div>
+        <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN 1</button>
+        <div id="message1" class="message"></div>
+    </div>
+
+    <div class="iban-container">
+        <p>IBAN 2:</p>
+        <div id="iban2" class="iban-display">YOUR_SECOND_IBAN_HERE</div>
+        <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN 2</button>
+        <div id="message2" class="message"></div>
+    </div>
+
+    <script>
+        function copyIBAN(ibanId, messageId) {
+            const ibanText = document.getElementById(ibanId).innerText;
+            const messageElement = document.getElementById(messageId);
+
+            navigator.clipboard.writeText(ibanText).then(() => {
+                messageElement.innerText = 'Copied!';
+                setTimeout(() => {
+                    messageElement.innerText = '';
+                }, 2000); // Clear message after 2 seconds
+            }).catch(err => {
+                messageElement.innerText = 'Failed to copy!';
+                console.error('Error copying text: ', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
