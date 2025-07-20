@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBAN Management</title>
+    <title>Payment Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,6 +14,7 @@
             --border-color: #cce0ff; /* Lighter blue for borders */
             --button-hover-color: #003f7f; /* Even darker blue for button hover */
             --success-color: #28a745; /* Green for success messages */
+            --thank-you-color: #555; /* Slightly darker text for thank you */
         }
 
         body {
@@ -27,51 +28,77 @@
             margin: 0;
             padding: 20px;
             color: var(--text-color);
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
 
         h1 {
             color: var(--primary-color);
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-weight: 700;
-            font-size: 2.5em;
+            font-size: 1.8em; /* Adjusted for mobile */
+            text-align: center;
         }
 
-        .iban-container {
-            background-color: var(--highlight-color);
-            padding: 30px 40px;
+        .thank-you-message {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: var(--thank-you-color);
+            line-height: 1.5;
+            max-width: 600px;
+        }
+
+        .iban-card {
+            background-color: #ffffff; /* White background for the card */
+            padding: 25px;
             border-radius: 12px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            margin: 20px 0;
-            text-align: center;
+            margin: 15px 0;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px; /* Max width for mobile-first */
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
         }
 
-        .iban-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        .iban-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
         }
 
-        .iban-label {
-            font-size: 1.1em;
-            font-weight: 400;
-            margin-bottom: 10px;
+        .card-title {
+            margin-bottom: 20px;
+            font-size: 1.2em;
             color: var(--primary-color);
+            font-weight: 700;
+            text-align: center; /* Center the card titles */
         }
 
-        .iban-display {
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 25px;
-            color: var(--text-color);
-            word-break: break-all;
-            padding: 10px;
-            border: 1px dashed var(--border-color);
-            border-radius: 6px;
-            background-color: #ffffff;
+        .detail-item {
+            margin-bottom: 15px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
         }
+
+        .detail-item strong {
+            display: inline-block;
+            min-width: 120px; /* Adjusted for better alignment of labels */
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* --- Hide IBAN section visually --- */
+        .iban-hidden-section {
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            white-space: nowrap;
+            top: auto;
+            left: -9999px;
+        }
+        /* --- End Hide IBAN section visually --- */
 
         .copy-button {
             background-color: var(--primary-color);
@@ -84,6 +111,8 @@
             font-weight: 500;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 100%; /* Full width button for mobile */
+            margin-top: 20px; /* Add space above button */
         }
 
         .copy-button:hover {
@@ -103,27 +132,73 @@
             font-weight: 500;
             opacity: 0;
             transition: opacity 0.5s ease;
+            text-align: center;
         }
 
         .message.show {
             opacity: 1;
         }
+
+        /* Adjustments for smaller screens if needed (though max-width handles most) */
+        @media (max-width: 500px) {
+            body {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.6em;
+            }
+            .iban-card {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            .card-title {
+                font-size: 1.1em;
+            }
+            .copy-button {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Secure IBAN Access</h1>
+    <h1>Payment Information</h1>
 
-    <div class="iban-container">
-        <p class="iban-label">Account IBAN (Primary):</p>
-        <div id="iban1" class="iban-display">YOUR_FIRST_IBAN_HERE</div>
+    <p class="thank-you-message">
+        Thank you for choosing us! We appreciate your business and look forward to serving you again. Please find the necessary payment details below.
+    </p>
+
+    <div class="iban-card">
+        <h2 class="card-title">Primary Account</h2>
+        <div class="detail-item">
+            <strong>Bank Name:</strong> &nbsp; [BANK NAME 1]
+        </div>
+        <div class="detail-item">
+            <strong>Receiver Name:</strong> &nbsp; [RECEIVER NAME 1]
+        </div>
+
+        <div class="iban-hidden-section">
+            <div id="iban1">YOUR_FIRST_IBAN_HERE</div>
+        </div>
+
         <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN</button>
         <div id="message1" class="message"></div>
     </div>
 
-    <div class="iban-container">
-        <p class="iban-label">Account IBAN (Secondary):</p>
-        <div id="iban2" class="iban-display">YOUR_SECOND_IBAN_HERE</div>
+    <div class="iban-card">
+        <h2 class="card-title">Secondary Account</h2>
+        <div class="detail-item">
+            <strong>Bank Name:</strong> &nbsp; [BANK NAME 2]
+        </div>
+        <div class="detail-item">
+            <strong>Receiver Name:</strong> &nbsp; [RECEIVER NAME 2]
+        </div>
+
+        <div class="iban-hidden-section">
+            <div id="iban2">YOUR_SECOND_IBAN_HERE</div>
+        </div>
+
         <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN</button>
         <div id="message2" class="message"></div>
     </div>
@@ -135,20 +210,21 @@
 
             navigator.clipboard.writeText(ibanText).then(() => {
                 messageElement.innerText = 'IBAN copied to clipboard!';
+                messageElement.style.color = 'var(--success-color)';
                 messageElement.classList.add('show');
                 setTimeout(() => {
                     messageElement.classList.remove('show');
                     messageElement.innerText = '';
                 }, 2000); // Clear message after 2 seconds
             }).catch(err => {
-                messageElement.innerText = 'Failed to copy IBAN.';
+                messageElement.innerText = 'Failed to copy IBAN. Please try again or copy manually if possible.';
                 messageElement.style.color = 'red'; // Indicate error
                 messageElement.classList.add('show');
                 setTimeout(() => {
                     messageElement.classList.remove('show');
                     messageElement.innerText = '';
                     messageElement.style.color = ''; // Reset color
-                }, 2000);
+                }, 3000); // Longer display for error
                 console.error('Error copying text: ', err);
             });
         }
