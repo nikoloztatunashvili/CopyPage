@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary-color: #0056b3; /* Darker blue for primary elements */
@@ -15,6 +16,12 @@
             --button-hover-color: #003f7f; /* Even darker blue for button hover */
             --success-color: #28a745; /* Green for success messages */
             --thank-you-color: #555; /* Slightly darker text for thank you */
+            --redirect-button-color: #28a745; /* Green for redirect button */
+            --redirect-button-hover-color: #218838; /* Darker green for hover */
+            --social-icon-color: #0056b3;
+            --social-icon-hover-color: #003f7f;
+            --paypal-color: #0070ba; /* PayPal blue */
+            --paypal-hover-color: #004a80;
         }
 
         body {
@@ -48,7 +55,7 @@
             max-width: 600px;
         }
 
-        .iban-card {
+        .payment-card {
             background-color: #ffffff; /* White background for the card */
             padding: 25px;
             border-radius: 12px;
@@ -61,7 +68,7 @@
             overflow: hidden;
         }
 
-        .iban-card:hover {
+        .payment-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
         }
@@ -79,6 +86,9 @@
             font-size: 1em;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Space out label and value */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px; /* Space between label and value */
         }
 
         .detail-item strong {
@@ -86,6 +96,12 @@
             min-width: 120px; /* Adjusted for better alignment of labels */
             color: var(--primary-color);
             font-weight: 700;
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+
+        .detail-value {
+            flex-grow: 1; /* Allow value to take up remaining space */
+            word-break: break-all; /* Ensure long values wrap */
         }
 
         /* --- Hide IBAN section visually --- */
@@ -100,9 +116,16 @@
         }
         /* --- End Hide IBAN section visually --- */
 
-        .copy-button {
-            background-color: var(--primary-color);
-            color: white;
+        .button-group {
+            display: flex;
+            flex-direction: column; /* Stack buttons on mobile */
+            gap: 15px; /* Space between buttons */
+            margin-top: 20px;
+        }
+
+        .copy-button,
+        .redirect-button,
+        .paypal-button {
             border: none;
             padding: 12px 25px;
             border-radius: 6px;
@@ -112,7 +135,14 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 100%; /* Full width button for mobile */
-            margin-top: 20px; /* Add space above button */
+            text-align: center; /* Ensure text is centered */
+            text-decoration: none; /* For link-buttons */
+            display: inline-block; /* For link-buttons */
+        }
+
+        .copy-button {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .copy-button:hover {
@@ -120,7 +150,29 @@
             transform: translateY(-2px);
         }
 
-        .copy-button:active {
+        .redirect-button {
+            background-color: var(--redirect-button-color);
+            color: white;
+        }
+
+        .redirect-button:hover {
+            background-color: var(--redirect-button-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .paypal-button {
+            background-color: var(--paypal-color);
+            color: white;
+        }
+
+        .paypal-button:hover {
+            background-color: var(--paypal-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .copy-button:active,
+        .redirect-button:active,
+        .paypal-button:active {
             transform: translateY(0);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
@@ -139,6 +191,24 @@
             opacity: 1;
         }
 
+        .social-icons {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .social-icons a {
+            font-size: 2.2em; /* Larger icons */
+            color: var(--social-icon-color);
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--social-icon-hover-color);
+            transform: translateY(-3px);
+        }
+
         /* Adjustments for smaller screens if needed (though max-width handles most) */
         @media (max-width: 500px) {
             body {
@@ -147,16 +217,25 @@
             h1 {
                 font-size: 1.6em;
             }
-            .iban-card {
+            .payment-card {
                 padding: 20px;
                 margin: 10px 0;
             }
             .card-title {
                 font-size: 1.1em;
             }
-            .copy-button {
+            .copy-button,
+            .redirect-button,
+            .paypal-button {
                 font-size: 1em;
                 padding: 10px 20px;
+            }
+            .detail-item strong {
+                min-width: 100px;
+            }
+            .social-icons {
+                font-size: 1.8em;
+                gap: 20px;
             }
         }
     </style>
@@ -169,64 +248,155 @@
         It was a true pleasure to have you with us. We extend our warmest thanks for your visit to our hotel and cafe. We hope to have the opportunity to serve you again very soon.
     </p>
 
-    <div class="iban-card">
-        <h2 class="card-title">BOG Account</h2>
+    <div class="payment-card">
+        <h2 class="card-title">Bank Transfer (Primary Account)</h2>
         <div class="detail-item">
-            <strong>Bank Name:</strong> &nbsp; Bank of Georgia
+            <strong>Bank Name:</strong> <span class="detail-value">[BANK NAME 1]</span>
         </div>
         <div class="detail-item">
-            <strong>Receiver Name:</strong> &nbsp; [RECEIVER NAME 1]
+            <strong>Receiver Name:</strong> <span class="detail-value">[RECEIVER NAME 1]</span>
         </div>
 
         <div class="iban-hidden-section">
             <div id="iban1">YOUR_FIRST_IBAN_HERE</div>
         </div>
 
-        <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN</button>
+        <div class="button-group">
+            <button class="redirect-button" onclick="redirectToBank()">Pay Now (Bank Link)</button>
+            <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN</button>
+        </div>
         <div id="message1" class="message"></div>
     </div>
 
-    <div class="iban-card">
-        <h2 class="card-title">TBC Account</h2>
+    <div class="payment-card">
+        <h2 class="card-title">Bank Transfer (Secondary Account)</h2>
         <div class="detail-item">
-            <strong>Bank Name:</strong> &nbsp; TBC Bank
+            <strong>Bank Name:</strong> <span class="detail-value">[BANK NAME 2]</span>
         </div>
         <div class="detail-item">
-            <strong>Receiver Name:</strong> &nbsp; [RECEIVER NAME 2]
+            <strong>Receiver Name:</strong> <span class="detail-value">[RECEIVER NAME 2]</span>
         </div>
 
         <div class="iban-hidden-section">
             <div id="iban2">YOUR_SECOND_IBAN_HERE</div>
         </div>
 
-        <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN</button>
+        <div class="button-group">
+            <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN</button>
+        </div>
         <div id="message2" class="message"></div>
     </div>
 
+    <div class="payment-card">
+        <h2 class="card-title">SWIFT Transfer Details</h2>
+        <p style="text-align: center; margin-bottom: 20px; font-size: 0.95em;">
+            For international transfers, please refer to our detailed SWIFT information.
+        </p>
+        <div class="button-group">
+            <a href="swift.pdf" class="redirect-button" target="_blank" rel="noopener noreferrer">View SWIFT Details (PDF)</a>
+        </div>
+    </div>
+
+    <div class="payment-card">
+        <h2 class="card-title">PayPal Transfer</h2>
+        <div class="detail-item">
+            <strong>PayPal Email/Username:</strong> <span id="paypalEmail" class="detail-value">YOUR_PAYPAL_EMAIL_OR_USERNAME_HERE</span>
+            <button class="copy-button copy-inline" onclick="copyValue('paypalEmail', 'messagePaypalEmail')">Copy</button>
+        </div>
+        <div id="messagePaypalEmail" class="message"></div>
+
+        <div class="detail-item" style="margin-top: 15px;">
+            <strong>PayPal.Me Link:</strong> <span id="paypalMe" class="detail-value">YOUR_PAYPAL_ME_LINK_HERE</span>
+            <button class="copy-button copy-inline" onclick="copyValue('paypalMe', 'messagePaypalMe')">Copy</button>
+        </div>
+        <div id="messagePaypalMe" class="message"></div>
+
+        <div class="button-group">
+            <button class="paypal-button" onclick="redirectToPayPal()">Pay with PayPal</button>
+        </div>
+        <div id="messagePaypal" class="message"></div>
+    </div>
+
+    <div class="social-icons">
+        <a href="https://www.facebook.com/oldhouse1" target="_blank" rel="noopener noreferrer" title="Visit our Facebook page">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/hoteloldhousemestia" target="_blank" rel="noopener noreferrer" title="Visit our Instagram page">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </div>
+
     <script>
-        function copyIBAN(ibanId, messageId) {
-            const ibanText = document.getElementById(ibanId).innerText;
+        const universalBankLink = 'https://tbconline.ge/MB/TT/GE35TB7544145061100014';
+        const facebookPageLink = 'https://www.facebook.com/oldhouse1';
+        const instagramPageLink = 'https://www.instagram.com/hoteloldhousemestia';
+
+        // For PayPal
+        const paypalDeepLink = 'paypal://paypal.me/tatunn';
+        const paypalMeLink = 'https://paypal.me/tatunn';
+
+        // Function to copy any value by its element ID
+        function copyValue(elementId, messageId) {
+            const textToCopy = document.getElementById(elementId).innerText;
             const messageElement = document.getElementById(messageId);
 
-            navigator.clipboard.writeText(ibanText).then(() => {
-                messageElement.innerText = 'IBAN copied to clipboard!';
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                messageElement.innerText = 'Copied!';
                 messageElement.style.color = 'var(--success-color)';
                 messageElement.classList.add('show');
                 setTimeout(() => {
                     messageElement.classList.remove('show');
                     messageElement.innerText = '';
-                }, 2000); // Clear message after 2 seconds
+                }, 2000);
             }).catch(err => {
-                messageElement.innerText = 'Failed to copy IBAN. Please try again or copy manually if possible.';
-                messageElement.style.color = 'red'; // Indicate error
+                messageElement.innerText = 'Failed to copy. Please copy manually.';
+                messageElement.style.color = 'red';
                 messageElement.classList.add('show');
                 setTimeout(() => {
                     messageElement.classList.remove('show');
                     messageElement.innerText = '';
-                    messageElement.style.color = ''; // Reset color
-                }, 3000); // Longer display for error
+                    messageElement.style.color = '';
+                }, 3000);
                 console.error('Error copying text: ', err);
             });
+        }
+
+        // Specific function for IBAN copy (uses copyValue internally now)
+        function copyIBAN(ibanId, messageId) {
+            copyValue(ibanId, messageId);
+        }
+
+        // Redirect to Bank Universal Link
+        function redirectToBank() {
+            const newWindow = window.open(universalBankLink, '_blank');
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                setTimeout(() => {
+                    window.location.href = universalBankLink;
+                }, 100);
+            }
+        }
+
+        // Redirect to PayPal
+        function redirectToPayPal() {
+
+            // Fallback to PayPal.Me link or standard web link
+            if (paypalMeLink && paypalMeLink !== 'https://paypal.me/tatun') {
+                const newWindow = window.open(paypalMeLink, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    // Hard redirect fallback if popup blocked
+                    setTimeout(() => {
+                        window.location.href = paypalMeLink;
+                    }, 100);
+                }
+            }
+
+            // Try deep link first if available
+            if (paypalDeepLink && paypalDeepLink !== 'paypal://paypal.me/tatun') {
+                const newWindow = window.open(paypalDeepLink, '_blank');
+                if (newWindow && !newWindow.closed) { // If deep link opened successfully
+                    return;
+                }
+            }
         }
     </script>
 
