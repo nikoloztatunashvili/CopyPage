@@ -3,68 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBAN Copy Page</title>
+    <title>IBAN Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0056b3; /* Darker blue for primary elements */
+            --secondary-color: #f0f4f8; /* Light gray for background */
+            --text-color: #333; /* Dark gray for general text */
+            --highlight-color: #e6f0ff; /* Light blue for container background */
+            --border-color: #cce0ff; /* Lighter blue for borders */
+            --button-hover-color: #003f7f; /* Even darker blue for button hover */
+            --success-color: #28a745; /* Green for success messages */
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #f4f4f4;
+            background-color: var(--secondary-color);
             margin: 0;
+            padding: 20px;
+            color: var(--text-color);
         }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 2.5em;
+        }
+
         .iban-container {
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 15px 0;
+            background-color: var(--highlight-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
             text-align: center;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .iban-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .iban-label {
+            font-size: 1.1em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
         .iban-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-            word-break: break-all; /* Ensures long IBANs wrap */
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            word-break: break-all;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            background-color: #ffffff;
         }
+
         .copy-button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.2s ease;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+
         .copy-button:hover {
-            background-color: #0056b3;
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
         }
+
+        .copy-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
         .message {
-            margin-top: 10px;
-            color: green;
-            font-size: 0.9em;
+            margin-top: 15px;
+            color: var(--success-color);
+            font-size: 0.95em;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .message.show {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-    <h1>Your IBAN Addresses</h1>
+    <h1>Secure IBAN Access</h1>
 
     <div class="iban-container">
-        <p>Bank of Georgia</p>
-        <div id="iban1" class="iban-display">GE22BG99999999999</div>
-        <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN 1</button>
+        <p class="iban-label">Account IBAN (Primary):</p>
+        <div id="iban1" class="iban-display">YOUR_FIRST_IBAN_HERE</div>
+        <button class="copy-button" onclick="copyIBAN('iban1', 'message1')">Copy IBAN</button>
         <div id="message1" class="message"></div>
     </div>
 
     <div class="iban-container">
-        <p>TBC Bank - Name Surname</p>
-        <div id="iban2" class="iban-display">Ge35TB76586876876887</div>
-        <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN 2</button>
+        <p class="iban-label">Account IBAN (Secondary):</p>
+        <div id="iban2" class="iban-display">YOUR_SECOND_IBAN_HERE</div>
+        <button class="copy-button" onclick="copyIBAN('iban2', 'message2')">Copy IBAN</button>
         <div id="message2" class="message"></div>
     </div>
 
@@ -74,12 +134,21 @@
             const messageElement = document.getElementById(messageId);
 
             navigator.clipboard.writeText(ibanText).then(() => {
-                messageElement.innerText = 'Copied!';
+                messageElement.innerText = 'IBAN copied to clipboard!';
+                messageElement.classList.add('show');
                 setTimeout(() => {
+                    messageElement.classList.remove('show');
                     messageElement.innerText = '';
                 }, 2000); // Clear message after 2 seconds
             }).catch(err => {
-                messageElement.innerText = 'Failed to copy!';
+                messageElement.innerText = 'Failed to copy IBAN.';
+                messageElement.style.color = 'red'; // Indicate error
+                messageElement.classList.add('show');
+                setTimeout(() => {
+                    messageElement.classList.remove('show');
+                    messageElement.innerText = '';
+                    messageElement.style.color = ''; // Reset color
+                }, 2000);
                 console.error('Error copying text: ', err);
             });
         }
