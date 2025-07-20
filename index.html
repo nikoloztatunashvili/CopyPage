@@ -136,8 +136,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 100%; /* Full width button for mobile */
             text-align: center; /* Ensure text is centered */
-            text-decoration: none; /* For link-buttons */
-            display: inline-block; /* For link-buttons */
+            text-decoration: none; /* For link-buttons (if they were a tags) */
+            display: flex; /* Make it a flex container */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
         }
 
         .copy-button {
@@ -293,7 +295,7 @@
             For international transfers, please refer to our detailed SWIFT information.
         </p>
         <div class="button-group">
-            <a href="swift.pdf" class="redirect-button" target="_blank" rel="noopener noreferrer">View SWIFT Details (PDF)</a>
+            <button class="redirect-button" onclick="redirectToSwiftPDF()">View SWIFT Details (PDF)</button>
         </div>
     </div>
 
@@ -307,14 +309,10 @@
 
         <div class="detail-item" style="margin-top: 15px;">
             <strong>PayPal.Me Link:</strong> <span id="paypalMe" class="detail-value">YOUR_PAYPAL_ME_LINK_HERE</span>
-            <button class="copy-button copy-inline" onclick="copyValue('paypalMe', 'messagePaypalMe')">Copy</button>
         </div>
-        <div id="messagePaypalMe" class="message"></div>
-
         <div class="button-group">
             <button class="paypal-button" onclick="redirectToPayPal()">Pay with PayPal</button>
         </div>
-        <div id="messagePaypal" class="message"></div>
     </div>
 
     <div class="social-icons">
@@ -330,6 +328,7 @@
         const universalBankLink = 'https://tbconline.ge/MB/TT/GE35TB7544145061100014';
         const facebookPageLink = 'https://www.facebook.com/oldhouse1';
         const instagramPageLink = 'https://www.instagram.com/hoteloldhousemestia';
+        const swiftPDFLink = 'swift.pdf'; // Make sure swift.pdf is in the same directory!
 
         // For PayPal
         const paypalDeepLink = 'paypal://paypal.me/tatunn';
@@ -374,6 +373,11 @@
                     window.location.href = universalBankLink;
                 }, 100);
             }
+        }
+
+        // Redirect to SWIFT PDF
+        function redirectToSwiftPDF() {
+            window.open(swiftPDFLink, '_blank');
         }
 
         // Redirect to PayPal
